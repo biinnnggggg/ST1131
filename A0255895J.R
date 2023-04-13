@@ -16,6 +16,65 @@ names(hdb_data)
 
 
 # exploratory data analysis
+
+
+par(mfrow=c(2, 2))
+
+
+boxplot(resale_price ~ town, xlab = "Location", ylab = "Resale Price")
+boxplot(resale_price ~ flat_type, xlab = "Flat Type", ylab = "Resale Price")
+boxplot(resale_price ~ flat_model, xlab = "Flat Model", ylab = "Resale Price")
+boxplot(resale_price ~ month, xlab = "Month Sold", ylab = "Resale Price")
+
+par(mfrow=c(1, 2))
+
+plot(floor_area_sqm, resale_price)
+plot(lease_commence_date, resale_price)
+
+cor(hdb_data[,c("floor_area_sqm", "lease_commence_date", "resale_price")], method="pearson")
+
+
+# inital findings
+
+# 1. cor(resale_price, floor_area_sqm) = 0.823 (3dp). There is strong linear and positive association
+# between resale_price and floor_area_sqm. Candidate for explanatory variable.
+# 2. natural grouping of resale_price by flat_type
+# 3. cor(resale_price, lease_commence_date) = 0.370 (3dp). There is weak or no
+# association between resale_price and lease_commmence_date.
+
+# Univariate analysis on resale_price
+
+par(mfrow=c(2, 1))
+hist(resale_price, col = "red")
+boxplot(resale_price, horizontal = TRUE, col = "red")
+
+# resale price is slightly right-skewed
+
+# resale_price ~ floor_area_sqm, group by flat_type
+
+hdb_data$flat_type <- as.factor(hdb_data$flat_type)
+hdb_data$flat_model <- as.factor(hdb_data$flat_model)
+
+
+# start of the report
+
+par(mfrow=c(2, 1))
+hist(resale_price, main = "Histogram of Resale Price")
+hist(floor_area_sqm, main = "Histogram of Floor Area (sqm)")
+
+# from the histograms, there are no gaps in the hdb_data for resale_price and floor area
+# quantitative => suitable for regression
+
+# uncertain whether sample is randomized, we just assume it for the assignment
+ 
+# We compute the correlation matrix for the quantitative variables floor_area_sqm
+# lease_commence_date, and resale_price
+
+cor(hdb_data[,c("floor_area_sqm", "lease_commence_date", "resale_price")], method="pearson")
+
+
+# log transform
+
 hdb_data['log_resale_price'] = log(resale_price)
 attach(hdb_data)
 log_resale_price
@@ -195,10 +254,7 @@ which(C > 1)
 
 
 
-
-
-
-# other possible link functions
+# alternative link functions
 
 # consider the transform T : resale_price -> 1/(resale_price)
 
@@ -219,61 +275,3 @@ plot(1/(resale_price) ~ floor_area_sqm)
 cor(1/(resale_price), floor_area_sqm)
 
 # correlation between log(resale_price) and floor_area_sqm is -0.8237911
-
-
-par(mfrow=c(2, 2))
-
-
-boxplot(resale_price ~ town, xlab = "Location", ylab = "Resale Price")
-boxplot(resale_price ~ flat_type, xlab = "Flat Type", ylab = "Resale Price")
-boxplot(resale_price ~ flat_model, xlab = "Flat Model", ylab = "Resale Price")
-boxplot(resale_price ~ month, xlab = "Month Sold", ylab = "Resale Price")
-
-par(mfrow=c(1, 2))
-
-plot(floor_area_sqm, resale_price)
-plot(lease_commence_date, resale_price)
-
-cor(hdb_data[,c("floor_area_sqm", "lease_commence_date", "resale_price")], method="pearson")
-
-
-# inital findings
-
-# 1. cor(resale_price, floor_area_sqm) = 0.823 (3dp). There is strong linear and positive association
-# between resale_price and floor_area_sqm. Candidate for explanatory variable.
-# 2. natural grouping of resale_price by flat_type
-# 3. cor(resale_price, lease_commence_date) = 0.370 (3dp). There is weak or no
-# association between resale_price and lease_commmence_date.
-
-# Univariate analysis on resale_price
-
-par(mfrow=c(2, 1))
-hist(resale_price, col = "red")
-boxplot(resale_price, horizontal = TRUE, col = "red")
-
-# resale price is slightly right-skewed
-
-# resale_price ~ floor_area_sqm, group by flat_type
-
-hdb_data$flat_type <- as.factor(hdb_data$flat_type)
-hdb_data$flat_model <- as.factor(hdb_data$flat_model)
-
-
-# start of the report
-
-# 1. summarize the response variable using summary statistics, figures and/or plots.
-# Comment if it is suitable to fit a linear regression model for this response.
-
-par(mfrow=c(2, 1))
-hist(resale_price, main = "Histogram of Resale Price")
-hist(floor_area_sqm, main = "Histogram of Floor Area (sqm)")
-
-# from the histograms, there are no gaps in the hdb_data for resale_price and floor area
-
-# uncertain whether sample is randomized, we just assume it for the assignment
- 
-# We compute the correlation matrix for the quantitative variables floor_area_sqm
-# lease_commence_date, and resale_price
-
-cor(hdb_data[,c("floor_area_sqm", "lease_commence_date", "resale_price")], method="pearson")
-
