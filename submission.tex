@@ -1,8 +1,14 @@
 \input{preamble}
-    \usepackage[a4paper, margin=2.5cm]{geometry}
+\usepackage[a4paper, margin=0.3cm]{geometry}
+% edits for submission
+\sectionfont{\normalsize}
+\subsectionfont{\normalsize}
+\subsubsectionfont{\small}
+
 \begin{document}
 
 \maketitle
+\pagestyle{empty}
 
 \section{Introduction}
 
@@ -14,12 +20,12 @@ We begin this section with a summary of the data and also identify important rel
 
 \begin{figure}[!htp]
     \centering
-    \includegraphics[width=0.8\textwidth]{images/scatterplotmatrix.png}
+    \includegraphics[width=0.7\textwidth]{images/scatterplotmatrix.png}
     \caption{Scatterplot matrix of quantitative variables.}
     \label{fig:scatterplot matrix}
 \end{figure}
 
-We observe that \code{resale_price} is right-skewed. There is weak or no correlation between \newline\code{lease_commence_date} and \code{resale_price} as shown by the low correlation of 0.370 so we will not consider \code{lease_commence_date}as a regressor. There is a strong linear correlation between \code{floor_area_sqm} and \code{resale_price}.
+We observe that \code{resale_price} quantitative which is necessary for regression modelling and the distribution is right-skewed. There is weak or no correlation between \newline\code{lease_commence_date} and \code{resale_price} as shown by the low correlation of 0.370 so we will not consider \code{lease_commence_date}as a regressor. There is a strong linear correlation between \code{floor_area_sqm} and \code{resale_price}.
 \begin{verbatim}
     > head(street_name)
     [1] "ROWELL RD"   "ROWELL RD"   "CHANDER RD"   "TG PAGAR PLAZA"   "QUEEN ST"   "KLANG LANE"
@@ -42,10 +48,23 @@ As we identified from our preliminary analysis, \code{resale_price}, is right-sk
 A high correlation value of 0.833 between \code{log(resale_price)} and \code{floor_area_sqm} was also observed. Therefore, we expect \code{floor_area_sqm} to be a significant predictor of \code{resale_price}.
 
 \begin{figure}
+\centering
+\begin{minipage}[t]{0.75\textwidth}
     \centering
-    \includegraphics[width=0.8\textwidth]{images/Screenshot 2023-04-11 175624.png}
+    \includegraphics[width=\textwidth]{images/Screenshot 2023-04-11 175624.png}
     \caption{Histogram of resale\_price before and after logarithm transform.}
     \label{fig:histogram_transform}
+\end{minipage}\hfill
+\begin{minipage}[t]{0.24\textwidth}
+  \centering
+  \includegraphics[width=\textwidth]{images2/logresaleprice against flattype.png}
+  \caption{log(resale\_price) against flat\_type.}
+  \label{fig: boxplot}
+\end{minipage}
+\end{figure}
+
+\begin{figure}
+    
 \end{figure}
 
 To check for linearity, \code{log(resale_price)} is plotted against \code{floor_area_sqm} (Fig. \ref{fig: m1 plotted}) A clear and strong linear association is observed.
@@ -58,7 +77,7 @@ This model was then fitted in R with the \code{lm()} function using the Ordinary
 
 \begin{figure}[!htp]
 \centering
-\begin{minipage}[t]{0.47\textwidth}
+\begin{minipage}[t]{0.45\textwidth}
   \centering
   \caption{$M_1$ Linear Regression Line}
   \label{fig: m1 plotted}
@@ -92,23 +111,17 @@ Similarly, with the initial model, we apply a logarithm transform for the respon
 
 Since the explanatory variables \code{floor_area_sqm} and \code{floor_area_sqft} are equivalent representations of each other (Fig. \ref{fig:scatterplot matrix}), we exclude \code{floor_area_sqft} to avoid multicollinearity in our model. We also exclude \code{flat_type} as there is some collinearity with \code{floor_area_sqm} (Fig. \ref{fig: boxplot}).
 
-\begin{figure}
-    \centering
-  \includegraphics[width=0.6\textwidth]{images2/logresaleprice against flattype.png}
-  \caption{log(resale\_price) against flat\_type.}
-  \label{fig: boxplot}
-\end{figure}
-
-
 We include \code{flat_model} and \code{town} as categorical explanatory variables representing the model and location of the HDB flat respectively. These seem causally related to the resale price of the HDB flat so we included them.
 
 We also include \code{storey_range}, a categorical explanatory variable to see if it would improve the model's fit and/or accuracy. Since \code{storey_range} has overlapping categories, we merge overlapping categories to encode. From this, 2 distinct categories are obtained, ``01 TO 15" and ``16 TO 27".
 
-The interaction terms \code{floor_area_sqm * town}, \code{town * flat_model} and \newline \code{flat_model * floor_area_sqm} were introduced to account for any interaction between these variables. Now the systematic component of the intermediate model includes the explanatory variables: \code{town}, \newline\code{floor_area_sqm}, \code{flat_model}, and \code{storey_range} and also the interaction terms mentioned above.
+The interaction terms \code{floor_area_sqm * town}, \code{town * flat_model} and \code{flat_model * floor_area_sqm} were introduced to account for any interaction between these variables. Now the systematic component of the intermediate model includes the explanatory variables: \code{town}, \newline\code{floor_area_sqm}, \code{flat_model}, and \code{storey_range} and also the interaction terms mentioned above.
 The intermediate model specification is as follows:
 \begin{align*}
-M2: \log(\text{resale\_price}) \sim \text{town} &+ \text{floor\_area\_sqm} + \text{flat\_model} + \text{storey\_range} \\ &+ \text{floor\_area\_sqm * town} \\ &+ \text{town * flat\_model} \\ &+ \text{flat\_model * floor\_area\_sqm}.
+M2: \log(\text{resale\_price}) \sim \text{town} &+ \text{floor\_area\_sqm} + \text{flat\_model} + \text{storey\_range} + \text{floor\_area\_sqm * town} \\ &+ \text{town * flat\_model} + \text{flat\_model * floor\_area\_sqm}.
 \end{align*}
+
+\newpage
 
 The model summary is given in Fig. \ref{fig: m2 model summary} and the fitted model equation is omitted here for conciseness (see Appendix).
 
@@ -131,7 +144,7 @@ Like $M_1$, the p-value of the F-test ($<2.2 \times 10^{-16}$) for $M_2$ is very
 
 Note that the normal QQ-plot of the SR of $M_2$ (Fig. \ref{fig: m2 assumption check}) shows the quantile points to be mostly consistent with the theoretical normal line. Hence, we conclude that the SR of $M_2$ do follow a normal distribution. Therefore, normality is present. From the residual plot (Fig, \ref{fig: m2 assumption check}) we observed that the spread of residuals across all levels of fitted values is more or less constant. Therefore, we conclude that the constant variance assumption holds. Since both normality and constant variance assumptions hold, $M_2$ is an accurate model.
 
-Of the explanatory variables included, \code{town}, \code{floor_area_sqm}, \code{storey_range} are statistically significant, as indicated by the small p-values and *** in the model summary. The interaction terms \code{flat_model * floor_area_sqm} and \code{town * flat_model} were not found to be statistically significant in $M_2$ and thus were discarded. However, the other interaction term \code{floor_area_sqm * town} was found to be significant, so we include it in our final model $M_n$.
+Of the explanatory variables included, \code{town}, \code{floor_area_sqm}, \code{storey_range} are statistically significant, as indicated by the small p-values and *** in the model summary. The interaction terms \newline\code{flat_model * floor_area_sqm} and \code{town * flat_model} were not found to be statistically significant in $M_2$ and thus were discarded. However, the other interaction term \code{floor_area_sqm * town} was found to be significant, so we include it in our final model $M_n$.
 
 \subsection{Final Model}
 $M_n$ is specified:
@@ -167,14 +180,11 @@ To check for normality and constant variance, we consider the normal QQ-plot of 
 \end{verbatim}
 The output tells us that there are 52 outliers (of 6047 observations) and no influential points as there are 0 points beyond the Cook's distance. Then the fitted equation for $M_n$ is given by:
 \begin{align*}
-    \log(\text{resale\_price}) &= 12.398 + 0.00934 * \text{floor\_area\_sqm} \\ 
-    &+ 0.0920 * I(\text{storey\_range} = \text{16 TO 27})\\
-    &-0.0645 * I(\text{flat\_model} = \text{Improved}) \\
-    &+ 0.0136 * I(\text{flat\_model} = \text{Maisonette}) \\
-    &-0.0452 * I(\text{flat\_model} = \text{Model A}) \\
-    &- 0.0172 * I(\text{flat\_model} = \text{Model A2}) \\
-    &-0.0678 * I(\text{flat\_model} = \text{New Generation}) \\ &+ 0.0214 * I(\text{flat\_model} = \text{Premium Apartment}) \\
-    &-0.0486 * I(\text{flat\_model} = \text{Simplified}) \\ &- 0.131 * I(\text{flat\_model} = \text{Standard}) \\
+    \log(\text{resale\_price}) &= 12.398 + 0.00934 * \text{floor\_area\_sqm} + 0.0920 * I(\text{storey\_range} = \text{16 TO 27})\\
+    &-0.0645 * I(\text{flat\_model} = \text{Improved}) + 0.0136 * I(\text{flat\_model} = \text{Maisonette}) \\
+    &-0.0452 * I(\text{flat\_model} = \text{Model A}) - 0.0172 * I(\text{flat\_model} = \text{Model A2}) \\
+    &-0.0678 * I(\text{flat\_model} = \text{New Generation}) + 0.0214 * I(\text{flat\_model} = \text{Premium Apartment}) \\
+    &-0.0486 * I(\text{flat\_model} = \text{Simplified}) - 0.131 * I(\text{flat\_model} = \text{Standard}) \\
     &+ I(\text{town} = \text{JURONG EAST})(-0.215 - 0.000732 \times\text{floor\_area\_sqm}) \\
     &+ I(\text{town} = \text{WOODLANDS})(-0.164 - 0.00225 \times \text{floor\_area\_sqm})
 \end{align*}
@@ -184,7 +194,7 @@ The coefficient of \code{floor_area_sqm} is 0.00934. This means that for every 1
 \\
 
 The reference group is Apartment flats for analysis of \code{flat_model}. The coefficient is
-\begin{enumerate}
+\begin{enumerate}[noitemsep]
     \item -0.0645 when the flat model is Improved so we expect, holding all other variables constant, the mean \code{resale_price} to be lower by $(e^{-0.0645} - 1) \times 100 = -6.25$ \%
     \item +0.0136 when the flat model is Maisonette so we expect, holding all other variables constant, the mean \code{resale_price} to be higher by $(e^{0.0136} - 1) \times 100 = 1.37$ \%
     \item -0.0452 when the flat model is Model A so we expect, holding all other variables constant, the mean \code{resale_price} to be lower by $(e^{-0.0452} - 1) \times 100 = -4.42$ \%
@@ -197,7 +207,7 @@ The reference group is Apartment flats for analysis of \code{flat_model}. The co
 when compared to HDBs of flat model Apartment.
 
 For analysis of \code{town}, the reference group is flats in CENTRAL AREA. The coefficient of \code{town} is -0.215 and -0.164 when the flat is in JURONG EAST and WOODLANDS respectively. This means that we expect the mean \code{resale_price} to be lower by
-\begin{enumerate}
+\begin{enumerate}[noitemsep]
     \item $(e^{-0.215} - 1) \times 100 = -19.3\%$ on average for HDBs in JURONG EAST compared to CENTRAL AREA. 
     \item $(e^{-0.164} - 1) \times 100 = -15.1\%$ on average for HDBs in WOODLANDS compared to CENTRAL AREA.
 \end{enumerate}
@@ -205,10 +215,5 @@ The coefficients for the interaction term \code{flat_model * floor_area_sqm} are
 
 \section{Conclusion}
 In this analysis, we developed a linear regression model to predict HDB resale prices in Singapore. We started with a preliminary model that included several explanatory variables and iteratively refined the model through diagnostic tests and statistical analysis. Our final model includes significant regressors such as floor area, town, flat model, storey range, and the interaction terms between floor area and town, providing a good fit to the data with reasonable diagnostic results.
-
-\newpage
-
-\printbibliography
-\section*{Appendix}
 
 \end{document}

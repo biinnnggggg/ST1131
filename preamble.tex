@@ -1,0 +1,41 @@
+\documentclass[12pt]{article}
+
+\usepackage{amsfonts, amsmath, amssymb}
+\usepackage[backend=biber, style=apa]{biblatex}
+\addbibresource{.bib}
+
+\usepackage{enumitem}
+
+\usepackage{graphicx} % Required for inserting images
+\graphicspath{ {images/} }
+
+\usepackage{caption}
+\usepackage{subcaption}
+
+\renewcommand{\figurename}{Fig.}
+
+\usepackage{ragged2e}
+
+\usepackage{xcolor}
+\usepackage{listings}
+
+\usepackage{xparse}
+
+\usepackage{dcolumn}
+
+\usepackage{etoolbox}
+\makeatletter
+\patchcmd{\@verbatim}
+  {\verbatim@font}
+  {\verbatim@font\scriptsize}
+  {}{}
+
+\usepackage{sectsty}
+
+\definecolor{LightGray}{gray}{0.9}
+\definecolor{DarkGray}{gray}{0.2}
+
+\NewDocumentCommand{\code}{v}{%
+\texttt{\fontsize{11}{12}\selectfont\setlength{\fboxsep}{2pt}\colorbox{LightGray}{\textcolor{DarkGray}{#1}}}%
+}
+\renewcommand{\maketitle}{\input{titlepage}}
