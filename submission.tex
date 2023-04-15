@@ -1,9 +1,16 @@
 \input{preamble}
-\usepackage[a4paper, margin=0.3cm]{geometry}
+\usepackage[a4paper, margin=0.83cm]{geometry}
+
 % edits for submission
 \sectionfont{\normalsize}
 \subsectionfont{\normalsize}
 \subsubsectionfont{\small}
+
+\usepackage{draftwatermark}
+\SetWatermarkText{A0255895J}
+\SetWatermarkScale{5.2}
+\SetWatermarkLightness{0.98}
+\SetWatermarkAngle{0}
 
 \begin{document}
 
@@ -15,9 +22,7 @@
 This report proposes a linear regression model to predict the resale price of HDB flats in Singapore, based on a dataset of transactions from 2012. The model will consider factors such as location, floor area, flat model, and storey range. We acknowledge that the data's relevance to today's market may be limited due to changes in inflation, housing policy, and socioeconomic factors. The report will provide an overview of the dataset, describe the methodology used to develop the model, present the results, and discuss its strengths and limitations.
 
 \section{Data characteristics}
-
-We begin this section with a summary of the data and also identify important relationships in the data.
-
+The dataset is obtained from \url{https://data.gov.sg/dataset/resale-flat-prices}, it is uncertain whether the data is randomized but we will assume the case for the analysis.
 \begin{figure}[!htp]
     \centering
     \includegraphics[width=0.7\textwidth]{images/scatterplotmatrix.png}
@@ -25,7 +30,7 @@ We begin this section with a summary of the data and also identify important rel
     \label{fig:scatterplot matrix}
 \end{figure}
 
-We observe that \code{resale_price} quantitative which is necessary for regression modelling and the distribution is right-skewed. There is weak or no correlation between \newline\code{lease_commence_date} and \code{resale_price} as shown by the low correlation of 0.370 so we will not consider \code{lease_commence_date}as a regressor. There is a strong linear correlation between \code{floor_area_sqm} and \code{resale_price}.
+We observe that \code{resale_price} is quantitative which is necessary for regression modelling and the distribution is right-skewed. There is weak or no correlation between \code{lease_commence_date} and \code{resale_price} as shown by the low correlation of 0.370 so we will not consider \code{lease_commence_date}as a regressor. There is a strong linear correlation between \code{floor_area_sqm} and \code{resale_price}.
 \begin{verbatim}
     > head(street_name)
     [1] "ROWELL RD"   "ROWELL RD"   "CHANDER RD"   "TG PAGAR PLAZA"   "QUEEN ST"   "KLANG LANE"
@@ -49,16 +54,16 @@ A high correlation value of 0.833 between \code{log(resale_price)} and \code{flo
 
 \begin{figure}
 \centering
-\begin{minipage}[t]{0.75\textwidth}
+\begin{minipage}[t]{0.73\textwidth}
     \centering
     \includegraphics[width=\textwidth]{images/Screenshot 2023-04-11 175624.png}
     \caption{Histogram of resale\_price before and after logarithm transform.}
     \label{fig:histogram_transform}
 \end{minipage}\hfill
-\begin{minipage}[t]{0.24\textwidth}
+\begin{minipage}[t]{0.26\textwidth}
   \centering
-  \includegraphics[width=\textwidth]{images2/logresaleprice against flattype.png}
-  \caption{log(resale\_price) against flat\_type.}
+  \includegraphics[width=\textwidth]{images2/floor_area_sqm against flat_type.png}
+  \caption{floor\_area\_sqm against flat\_type.}
   \label{fig: boxplot}
 \end{minipage}
 \end{figure}
@@ -71,7 +76,7 @@ To check for linearity, \code{log(resale_price)} is plotted against \code{floor_
 
 Verifying these assumptions, we then proceed with the model specification:
 \[M_1: \log(\text{resale\_price}) \sim \text{floor\_area\_sqm}\]
-where \code{log(resale_price)} is the log-transformed response variable, the resale price of HDBs, and \code{floor_area_sqm}  is the explanatory variable representing the floor area of the HDB flat in square meters ($m^2$).
+where \code{log(resale_price)} is the log-transformed response variable, the resale price of HDBs, and \newline \code{floor_area_sqm} is the explanatory variable representing the floor area of the HDB flat in square meters ($m^2$).
 
 This model was then fitted in R with the \code{lm()} function using the Ordinary Least Squares (OLS) Method. The model summary is provided in Fig. \ref{fig: m1 model summary}.
 
