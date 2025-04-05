@@ -16,10 +16,10 @@ In this project, we aimed to predict housing prices in Singapore using a linear 
     - Descriptive statistics and visualizations (e.g., histograms, scatter plots) were created to understand the distribution of data and the relationships between features and housing prices.
     - Correlation analysis was performed to identify which features had the strongest relationship with housing prices.
 2. Model Building:
-    - We applied linear regression to model the relationship between the features and the housing price.
+    - We applied linear regression to model the relationship between selected features and the housing price.
+    - Considered different models and selected the most appropriate.
     - The model was trained using a training dataset, and various evaluation metrics (R-squared, Mean Absolute Error) were used to assess its performance.
 3. Model Evaluation:
-    - We validated the model using a test dataset and assessed the accuracy of the predictions.
     - The results were visualized through residual plots to evaluate the model's fit.
 4. Conclusion:
     - The final model’s performance was summarized, and the most significant features influencing housing prices were identified.
